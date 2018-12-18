@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 import app from './server/app'
 import Middleware from './server/middlewares';
 import Connection from './config/Connection';

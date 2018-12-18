@@ -24,7 +24,7 @@ class UserRouter {
 			const result = await User.find()
 			const users = result.map(document => {
 				return {
-					...document._doc,
+					...document,
 					request: {
 						type: 'GET',
 						uri: `http://localhost:3000/api/v1/users/${document._id}`

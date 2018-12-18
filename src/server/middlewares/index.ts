@@ -4,6 +4,7 @@ import app from '../app'
 import router from '../../router'
 
 import exception from './exception';
+import NotFound from './NotFound';
 
 export default {
   init() {
@@ -13,6 +14,7 @@ export default {
     app.use('/api/v1', router)
   },
   initException() {
+    app.use(NotFound)
     app.use(exception)
   }
 }
