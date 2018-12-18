@@ -28,6 +28,7 @@ class UserRouter {
 					...document['_doc'],
 					request: {
 						type: 'GET',
+						resource: 'getUserById',
 						uri: `http://localhost:3000/api/v1/users/${document._id}`
 					}
 				}
@@ -44,7 +45,7 @@ class UserRouter {
 			const user = await User.findById(id)
 			res.status(status.ACCEPTED).json(user)
 		} catch (err) {
-			next(new GenericException(err.name, err.message))
+			next(new UserNotExistException(req.params.id))
 		}
 	}
 
