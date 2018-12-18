@@ -3,6 +3,7 @@ import * as status from 'http-status-codes'
 import { default as User } from "../model/User";
 import GenericException from "../exception/GenericException";
 import { Types } from 'mongoose';
+import UserNotExistException from '../exception/UserException';
 
 class UserRouter {
 	public router: Router
@@ -19,7 +20,7 @@ class UserRouter {
 		this.router.delete('/:id', this.delete)
 	}
 
-	private async getAllUsers(req: Request, res: Response) {
+	private async getAllUsers(req: Request, res: Response, next: NextFunction) {
 		try {
 			const result = await User.find()
 			const users = result.map(document => {
@@ -33,21 +34,21 @@ class UserRouter {
 			})
 			res.status(status.ACCEPTED).json(users)
 		} catch (err) {
-			new GenericException(err.name, err.message)
+			next(new GenericException(err.name, err.message))
 		}
 	}
 
-	private async getUserById(req: Request, res: Response) {
+	private async getUserById(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			const user = await User.findById(id).exec()
+			const user = await User.findById(id)
 			res.status(status.ACCEPTED).json(user)
 		} catch (err) {
-			new GenericException(err.name, err.message)
+			next(new GenericException(err.name, err.message))
 		}
 	}
 
-	private async save(req: Request, res: Response) {
+	private async save(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { name, password } = req.body
 			const user = new User({
@@ -58,17 +59,17 @@ class UserRouter {
 			const createdUser = await user.save()
 			res.status(status.CREATED).json({ createdUser: createdUser })
 		} catch (err) {
-			new GenericException(err.name, err.message)
+			next(new GenericException(err.name, err.message))
 		}
 	}
 
-	private async delete(req: Request, res: Response) {
+	private async delete(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 			const result = User.remove({ _id: id }).exec()
 			res.status(status.ACCEPTED).json(result)
 		} catch (err) {
-			new GenericException(err.name, err.message)
+			next(new GenericException(err.name, err.message))
 		}
 	}
 }
